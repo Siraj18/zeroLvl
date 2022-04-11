@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  app:
+    build: .
+    command: "/app/server"
+    environment:
+      - connection_string_postgres=postgres://postgres:mysecretpassword@db:5432/postgres?sslmode=disable
+      - cluster_id=test-cluster
+      - client_id=client-123
+      - channel=foo
+      - durrable_name=my-durable
+      - nats_url=nats://nats:4222
+      - address=:8000
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+      - nats
+  db:
+    container_name: db
+    image: postgres:14.2-alpine
+    environment:
+      - POSTGRES_PASSWORD=mysecretpassword
+    ports:
+      - 5432:5432
+  nats:
+    image: nats-streaming
+    ports:
+      - 4222:4222
